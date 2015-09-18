@@ -1,0 +1,56 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+	baseName = 'HotTopic-rest-service'
+	version = '0.1.0'
+	manifest {
+    attributes 'Main-Class': 'com.ucl.hottopic.Application'
+  }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+        }
+    }
+
+    test {
+        java {
+            srcDirs 'src/main/test'
+        }
+    }
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+  compile("org.springframework.boot:spring-boot-starter-web") {
+    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+  }
+  compile("org.springframework.boot:spring-boot-starter-log4j")
+  compile("org.springframework.data:spring-data-mongodb:1.7.2.RELEASE")
+  compile("com.fasterxml.jackson.datatype:jackson-datatype-joda")
+  testCompile("org.springframework:spring-test")
+  testCompile("junit:junit")
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.3'
+}

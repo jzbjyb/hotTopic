@@ -1,0 +1,18 @@
+<div ng-controller="hotTopicCtrl">
+	<div class="ht__panel" ng-repeat="htc in hotTopicCluster">
+		<div class="ht__content">
+			<div>
+				<h2>
+					{{htc['title']}} {{htc['score']}}
+				</h2>
+			</div>
+			<div>
+				<ul>
+					<li ng-repeat="(alias, weight) in classType">{{alias}} {{weight}}</li>
+				</ul>
+			</div>
+		</div>
+		<div class="ht__graph">
+		</div>
+	</div>
+</div>

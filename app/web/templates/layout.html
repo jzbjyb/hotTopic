@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <title>{% block title %}RVP{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}">
+    {% block header %} {% include "modules/header.html" %} {% endblock %}
+  </head>
+<body>
+{% block html_body %}
+  {% block nav_bar %}
+    <div class="nav">
+    {% include "modules/nav.html" %}
+    </div>
+  {% endblock %}
+  {% block main_layout %}
+    <div class="main-layout">
+    {% include "modules/main.html" %}
+    </div>
+  {% endblock %}
+{% endblock %}
+</body> 
