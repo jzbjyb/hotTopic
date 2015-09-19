@@ -1,0 +1,40 @@
+@import "config";
+@import "../bower_components/susy/sass/susy";
+@import "compass/utilities";
+
+.nav-container {
+	position: fixed;
+	height: 100%;
+	width: 150px;
+	background-color: $ex-light-gray;
+}
+
+.nav-ul {
+	padding-left: 0px;
+	font-size: 0px;
+	list-style: none;
+	li {
+		text-align: center;
+		font-size: 1.4rem;
+		line-height: 2.5rem;
+		a {
+			text-decoration: none;
+			color: $deep-gray;
+			&:hover {
+				color: $deep-gray;
+			}
+		}
+		&:hover {
+			background-color: $light-gray;
+		}
+	}
+}
+
+.main-layout {
+	margin-left: 150px;
+}
+
+#rootapp {
+	padding-left: 20px;
+	padding-right: 20px;
+}

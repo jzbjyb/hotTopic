@@ -1,0 +1,30 @@
+@import "../bower_components/susy/sass/susy";
+
+/**
+	* susy config 
+	*/
+$susy: (
+  columns: 12,
+  container: 1120px,
+  global-box-sizing: border-box,
+  gutters: 3px/100px
+);
+
+@include border-box-sizing;
+
+/**
+	* color config
+	*/
+$deep-gray: #333333;
+//$article-title_hover-color: #ff3333;
+$special-color: #5b9;
+$middle-gray: #666666;
+$light-gray: #bbbbbb;
+$background-gray: #eee;
+$ex-light-gray: #e6e6e6;
+
+
+/**
+	* font config
+	*/
+$font-stack: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", LatoLight, "Segoe UI Light", "HelveticaNeue-Light", "Helvetica-Light", "微軟正黑體", "微软雅黑", STHeitiTC-Light, STXihei, "Helvetica Neue", Helvetica, Arial, sans-serif;

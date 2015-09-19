@@ -1,0 +1,48 @@
+@import "config";
+@import "../bower_components/susy/sass/susy";
+@import "compass/utilities";
+
+.ht__container {
+	@include clearfix;
+}
+.ht__list {
+	@include span(4 of 12);
+}
+.ht__graph {
+	@include span(8 of 12 last);
+}
+.graph__container {
+	position: relative;
+}
+.graph__panel {
+	width: 100%;
+	position: absolute;
+	top: auto;
+}
+.ht__content {
+	&.added {
+		background-color: $ex-light-gray;
+	}
+}
+.ht__content__alias {
+	@include clearfix;
+}
+.ht-title {
+	font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  &:hover {
+  	color: $special-color;
+  	border-bottom-color: $special-color;
+  }
+}
+.ht-alias {
+	list-style: none;
+	li {
+		font-size: 1.3rem;
+		float: left;
+		margin-right: 5px;
+	}
+}

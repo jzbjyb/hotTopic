@@ -2,6 +2,7 @@ package com.ucl.hottopic.service;
 
 import com.ucl.hottopic.domain.HotTopic;
 import com.ucl.hottopic.repository.HotTopicRepository;
+import com.ucl.hottopic.service.util.ArrayListPrintable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.index.Index;
@@ -26,6 +27,14 @@ public class HotTopicService {
 
     public List<HotTopic> getBetween(Date start, Date end) {
         return hotTopicRepository.findByTimeBetween(start, end);
+    }
+
+    public HotTopic getOne(String id) {
+        return hotTopicRepository.findOne(id);
+    }
+
+    public List<HotTopic> getMulti(List<String> ids) {
+        return hotTopicRepository.findByIds(new ArrayListPrintable<String>(ids));
     }
 
     public List<HotTopic> getAll() {

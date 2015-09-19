@@ -1,7 +1,7 @@
 "use strict";
 (function() {
   angular.module('utils', ['ngCookies'])
-  .factory('utils', ['$window', '$location', '$http', '$cookies', '$timeout', function ($window, $location, $http, $cookies, $timeout) {
+  .factory('utils', ['$window', '$location', '$http', '$cookies', '$timeout', '$q', function ($window, $location, $http, $cookies, $timeout, $q) {
 
     $http.defaults.headers.common.Authorization = 'Bearer ' + $cookies.token;
 
@@ -31,6 +31,14 @@
     function generateApi(transformUrlFunction) {
       return {
         getJson: function (url) {
+          if(typeof url === 'object' && url.length > 0) {
+            var ajaxPromises = [];
+            url.map(function(e){ajaxPromises.push(ajax({
+              method: 'GET',
+              url: transformUrlFunction(e)
+            }))});
+            return $q.all(ajaxPromises);  
+          }
           return ajax({
             method: 'GET',
             url: transformUrlFunction(url)
@@ -81,6 +89,9 @@
 					if (data && data.code === 401) {
 						$window.location.href = '/';
 					}
+          if (data.code !== 200) {
+            utils.msgAlert(data['message'], 'error'); 
+          }
 				});
 			};
 		}());
@@ -109,7 +120,7 @@
         swal({   
           title: message,
           text: "",
-          timer: 700,
+          timer: 2000,
           animation: false,
           type: type,
           showConfirmButton: false 

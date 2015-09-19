@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -36,8 +37,15 @@ public class HotTopicController {
     @Autowired
     private Cluster cluster;
 
+    @RequestMapping(value = "/hottopics", method = RequestMethod.GET, params = {"ids"})
+    public RestApi getRangeById(@RequestParam(value = "ids") String ids) {
+        String[] idArr = ids.split(",");
+        List<HotTopic> hts = hotTopicService.getMulti(new ArrayList<String>(Arrays.asList(idArr)));
+        return new RestApi().setData(RestApi.getDataInstance().setHotTopics(hts));
+    }
+
     @RequestMapping(value = "/hottopics", method = RequestMethod.GET)
-    public RestApi getRange(@RequestParam(value="start", required = false) String start, @RequestParam(value = "end", required = false) String end) throws ParseException {
+    public RestApi getRangeByTime(@RequestParam(value="start", required = false) String start, @RequestParam(value = "end", required = false) String end) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat();
         List<HotTopic> hts;
         if(start == null && end == null) {

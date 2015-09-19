@@ -1,18 +1,22 @@
-<div ng-controller="hotTopicCtrl">
-	<div class="ht__panel" ng-repeat="htc in hotTopicCluster">
-		<div class="ht__content">
-			<div>
-				<h2>
-					{{htc['title']}} {{htc['score']}}
+<div ng-controller="hotTopicCtrl" class="ht__container">
+	<div class="ht__list">
+		<div class="ht__content" ng-class="{added: htc['added']}" ng-repeat="htc in hotTopicCluster">
+			<div class="ht__content__title" ng-click="clusterClick(htc)">
+				<h2 class="ht-title">
+					{{htc['title']}} #{{htc['score']}}
 				</h2>
 			</div>
-			<div>
-				<ul>
-					<li ng-repeat="(alias, weight) in classType">{{alias}} {{weight}}</li>
+			<div class="ht__content__alias">
+				<ul class="ht-alias">
+					<li ng-repeat="(alias, weight) in htc['cluster']">{{alias}}<sup>{{weight}}</sup></li>
 				</ul>
 			</div>
 		</div>
-		<div class="ht__graph">
+	</div>
+	<div class="ht__graph">
+		<div class="graph__container">
+			<div class="graph__panel ab-fixed">
+			</div>
 		</div>
 	</div>
 </div>
