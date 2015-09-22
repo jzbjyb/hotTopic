@@ -1,4 +1,8 @@
 <div ng-controller="hotTopicCtrl" class="ht__container">
+	<div class="datetime">
+		<button ng-click="changeDay(-1)">上一天</button>
+		<button ng-click="changeDay(1)">下一天</button>
+	</div>
 	<div class="ht__list">
 		<div class="ht__content" ng-class="{added: htc['added']}" ng-repeat="htc in hotTopicCluster">
 			<div class="ht__content__title" ng-click="clusterClick(htc)">

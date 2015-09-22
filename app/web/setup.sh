@@ -7,3 +7,4 @@ pip install -r etc/requirements.txt
 cd static
 bower install --allow-root
 compass compile sass/main.scss --force -s compressed
+cd ..

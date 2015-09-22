@@ -11,32 +11,34 @@ DEFAULT_HEADER = {'Content-Type': 'application/json'}
 DEFAULT_TIMEOUT = 120
 
 class Api(object):
-    def __init__(self, method, path, data={}, async=False, parallel=False):
+    def __init__(self, method, path, data={}, async=False):
         self.async = async
         data = json.dumps(data) if type(data) == type({}) else data
-        if not parallel:
-            try:
-                self.r = requests.request(method, CONFIG['API_URL'] + path, data=data, headers=DEFAULT_HEADER, timeout = DEFAULT_TIMEOUT)
-            except Exception as e:
-                utils.logger.warning(' '.join(['API', method, path, 'Status:' + str(e)]))
-                abort(500)
+        try:
+            self.r = requests.request(method, CONFIG['API_URL'] + path, data=data, headers=DEFAULT_HEADER, timeout = DEFAULT_TIMEOUT)
             utils.logger.info(' '.join(['API', method, path]))
             if self.r == None or self.r.status_code != 200:
                 if self.r == None:
                     utils.logger.warning(' '.join(['API', method, path, 'timeout']))
                 else:  
                     utils.logger.warning(' '.join(['API', method, path, str(self.json()['code']), self.json()['message']]))
-                if not self.async:
-                    abort(self.r.status_code)
+                self.abort_on(self.r.status_code)
+        except Exception as e:
+            utils.logger.warning(' '.join(['API', method, path, 'Status:' + str(e)]))
+            self.abort_on(500)
+
+    def abort_on(self, status_code):
+        if not self.async:
+            abort(status_code)
 
     def json(self):
-        if self.r == None:
+        if not hasattr(self, 'r') or self.r == None:
             return {}
         try:
             return self.r.json()
         except:
             utils.logger.warning('response can not be paresd to json')
-            abort(500)
+            self.abort_on(500)
 
     def data(self, name, return_type='none'):
         try:
