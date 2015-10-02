@@ -1,9 +1,13 @@
 package com.ucl.hottopic.service;
 
 import com.ucl.hottopic.domain.HotTopic;
+import com.ucl.hottopic.domain.HotTopicCluster;
+import com.ucl.hottopic.repository.HotTopicClusterRepository;
 import com.ucl.hottopic.repository.HotTopicRepository;
 import com.ucl.hottopic.service.util.ArrayListPrintable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Service;
@@ -24,24 +28,48 @@ import java.util.List;
 public class HotTopicService {
     @Autowired
     private HotTopicRepository hotTopicRepository;
+    @Autowired
+    private HotTopicClusterRepository hotTopicClusterRepository;
 
-    public List<HotTopic> getBetween(Date start, Date end) {
+    public HotTopicCluster getOneHotTopicCluster(String id) {
+        return hotTopicClusterRepository.findOne(id);
+    }
+
+    public HotTopicCluster getClusterByTime(Date start, Date end) {
+        return hotTopicClusterRepository.findByStartAndEnd(start, end);
+    }
+
+    public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
+        PageRequest request = new PageRequest(pageNum, pageSize, new Sort(Sort.Direction.DESC, "end"));
+        return hotTopicClusterRepository.findByEndLessThanEqual(end, request);
+    }
+
+    public List<HotTopicCluster> getAllClusters() {
+        return (List<HotTopicCluster>)hotTopicClusterRepository.findAll();
+    }
+
+    public List<HotTopic> getHotTopicBetween(Date start, Date end) {
         return hotTopicRepository.findByTimeBetween(start, end);
     }
 
-    public HotTopic getOne(String id) {
+    public Page<HotTopic>  getHotTopicBetween(Date start, Date end, int pageNum, int pageSize) {
+        PageRequest request = new PageRequest(pageNum, pageSize, new Sort(Sort.Direction.DESC, "time"));
+        return hotTopicRepository.findByTimeBetween(start, end, request);
+    }
+
+    public HotTopic getOneHotTopic(String id) {
         return hotTopicRepository.findOne(id);
     }
 
-    public List<HotTopic> getMulti(List<String> ids) {
+    public List<HotTopic> getMultiHotTopic(List<String> ids) {
         return hotTopicRepository.findByIds(new ArrayListPrintable<String>(ids));
     }
 
-    public List<HotTopic> getAll() {
+    public List<HotTopic> getAllHotTopic() {
         return (List<HotTopic>)hotTopicRepository.findAll();
     }
 
-    public HotTopic create(HotTopic hotTopic) {
+    public HotTopic createHotTopic(HotTopic hotTopic) {
         return hotTopicRepository.save(hotTopic);
     }
 }
