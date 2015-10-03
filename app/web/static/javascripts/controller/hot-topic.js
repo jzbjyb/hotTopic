@@ -1,16 +1,30 @@
 rootModule.controller('hotTopicCtrl', ['$scope','$routeParams', '$location', '$window', 'utils',	function($scope, $routeParams, $location, $window, utils) {
   var nowDate = new Date();
-  $scope.startDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
-  $scope.endDate = new Date($scope.startDate);
-  $scope.endDate.setDate($scope.endDate.getDate() + 1);
+  
+  $scope.scope = '24';
+  $scope.date = {
+    'year': nowDate.getFullYear(),
+    'month': nowDate.getMonth(),
+    'day': nowDate.getDate(),
+    'hour': nowDate.getHours()
+  }
 
   var dateParse = function(dateArr) {
     return dateArr.map(function(e) {return [e.getMonth() + 1, e.getDate(), e.getHours()].join('-')});
-  }  
-  $scope.$watchGroup(['startDate', 'endDate'], function(newVal, oldVal) {
-    console.log('get clusters');
+  }
+  /*
+  $scope.$watchGroup(['date.year', 'date.month', 'date.day', 'date.hour'], function(newVal, oldVal) {
     console.log(newVal);
-    if(!newVal || !newVal[0] || !newVal[1] || newVal[0].getTime() >= newVal[1].getTime()) return;
+    $scope.endDate = new Date(newVal[0], newVal[1], newVal[2], newVal[3]);
+  }, true)*/
+  
+  $scope.$watchGroup(['endDate', 'scope'], function(newVal, oldVal) {
+    if(!newVal || !newVal[0] || !newVal[1]) return;
+    var endDate = newVal[0];
+    var interval = newVal[1];
+    var startDate = new Date(endDate);
+    startDate.setHours(startDate.getHours() - interval);
+    console.log('get clusters from ' + startDate + ' to ' + endDate);
     var xArray = (function(start, end) {
       var xArray = [];
       var it = new Date(start);
@@ -20,7 +34,7 @@ rootModule.controller('hotTopicCtrl', ['$scope','$routeParams', '$location', '$w
       }
       xArray.push(it);
       return xArray;
-    })(newVal[0], newVal[1]);
+    })(startDate, endDate);
     renderManager.clear();
     // init chart
     $('.graph__panel').highcharts({
@@ -55,13 +69,13 @@ rootModule.controller('hotTopicCtrl', ['$scope','$routeParams', '$location', '$w
         data:[null,null]
       }
     });
-    utils.api.getJson(utils.genUrl('/clusters', {'start': newVal[0].toISOString(), 'end': newVal[1].toISOString()}))
+    utils.api.getJson(utils.genUrl('/clusters', {'date': endDate.toISOString(), 'scope': interval}))
     .success(function (data) {
-      if(data['data'] != undefined) {
-        $scope.hotTopicCluster = data['data']['topicClusterExts'];
+      if(data['data'] !== undefined && data['data']['hotTopicClusters'].length > 0) {
+        $scope.hotTopicClusters = data['data']['hotTopicClusters'][0];
       }
     }).error(function(msg) {
-      utils.msgAlert(msg, 'error');
+      utils.msgAlert(msg, 'error', 5000);
     });
   });
   
@@ -78,6 +92,7 @@ rootModule.controller('hotTopicCtrl', ['$scope','$routeParams', '$location', '$w
 
   var hotTopicsCache = [];
   $scope.clusterClick = function(cluster) {
+    return;
     if(cluster['added']) {
       renderManager.releaseData(cluster['title']);
     } else {
@@ -93,10 +108,14 @@ rootModule.controller('hotTopicCtrl', ['$scope','$routeParams', '$location', '$w
     }      
   };
 
+  $scope.change = function() {
+    $scope.endDate = new Date($scope.date.year, $scope.date.month,
+      $scope.date.day, $scope.date.hour);
+  }
+
   $scope.changeDay = function(offset) {
-    $scope.startDate = new Date($scope.startDate.setDate($scope.startDate.getDate() + offset));
-    $scope.endDate = new Date($scope.endDate.setDate($scope.endDate.getDate() + offset));
-    console.log('change Day');
+    $scope.date['day'] += offset;
+    $scope.change();
   }
   
   var renderManager = (function() {

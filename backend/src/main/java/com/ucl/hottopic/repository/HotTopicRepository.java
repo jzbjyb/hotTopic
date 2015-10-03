@@ -24,4 +24,5 @@ public interface HotTopicRepository extends CrudRepository<HotTopic, String> {
     @Query("{ 'id' : { $in: ?0 } }")
     List<HotTopic> findByIds(ArrayListPrintable<String> ids);
     Page<HotTopic> findByTimeBetween(Date from, Date to, Pageable pageable);
+    Page<HotTopic> findAll(Pageable pageable);
 }

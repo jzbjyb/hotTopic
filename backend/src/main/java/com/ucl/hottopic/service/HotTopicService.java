@@ -40,7 +40,7 @@ public class HotTopicService {
     }
 
     public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
-        PageRequest request = new PageRequest(pageNum, pageSize, new Sort(Sort.Direction.DESC, "end"));
+        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, "end"));
         return hotTopicClusterRepository.findByEndLessThanEqual(end, request);
     }
 
@@ -53,7 +53,7 @@ public class HotTopicService {
     }
 
     public Page<HotTopic>  getHotTopicBetween(Date start, Date end, int pageNum, int pageSize) {
-        PageRequest request = new PageRequest(pageNum, pageSize, new Sort(Sort.Direction.DESC, "time"));
+        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, "time"));
         return hotTopicRepository.findByTimeBetween(start, end, request);
     }
 
@@ -63,6 +63,11 @@ public class HotTopicService {
 
     public List<HotTopic> getMultiHotTopic(List<String> ids) {
         return hotTopicRepository.findByIds(new ArrayListPrintable<String>(ids));
+    }
+
+    public Page<HotTopic> getLatestHotTopics(int pageNum, int pageSize) {
+        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, "time"));
+        return hotTopicRepository.findAll(request);
     }
 
     public List<HotTopic> getAllHotTopic() {

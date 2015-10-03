@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -31,16 +34,17 @@ public class HotTopicRepositoryTest {
     @Test
     public void testFindByIds() {
         List<String> ids = new ArrayList<>();
-        ids.add("E809271A32CE8427DDE70253A7ABA50F");
-        ids.add("EBB1D71D664E5053355142D516536D32");
+        Page<HotTopic> hts = hotTopicService.getLatestHotTopics(1, 5);
+        for(HotTopic ht : hts.getContent()) {
+            ids.add(ht.getId());
+        }
         Collections.sort(ids);
-        List<HotTopic> hts = hotTopicService.getMulti(ids);
+        List<HotTopic> htsRe = hotTopicService.getMultiHotTopic(ids);
         List<String> idsFind = new ArrayList<>();
-        for(HotTopic ht : hts) {
+        for(HotTopic ht : htsRe) {
             idsFind.add(ht.getId());
         }
         Collections.sort(idsFind);
-        Assert.assertEquals(ids.size(), idsFind.size());
         for(int i=0; i<idsFind.size(); i++) {
             Assert.assertEquals(ids.get(i), idsFind.get(i));
         }

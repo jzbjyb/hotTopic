@@ -116,11 +116,12 @@
           return JSON.parse(storage.getItem(url)).content;
         }
       },
-      msgAlert: function (message, type) {
+      msgAlert: function (message, type, time) {
+        time = typeof time !== 'undefined' ? time : 2000;
         swal({   
           title: message,
           text: "",
-          timer: 2000,
+          timer: time,
           animation: false,
           type: type,
           showConfirmButton: false 

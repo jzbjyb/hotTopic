@@ -27,7 +27,7 @@ public class ClusterTest {
 
     @Test
     public void testCluster() {
-        List<HotTopic> hts = hotTopicService.getAll();
+        List<HotTopic> hts = hotTopicService.getAllHotTopic();
         List<TopicCluster> clusterList = cluster.cluster(hts, 0.6);
         for(TopicCluster c : clusterList) {
             List<String> titles = new ArrayList<String>(c.getCluster().keySet());

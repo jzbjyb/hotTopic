@@ -1,6 +1,8 @@
 package com.ucl.hottopic.domain;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,9 +18,26 @@ import java.util.List;
 
 @Document(collection = "HotTopicCluster")
 public class HotTopicCluster {
+    @Id
+    private String id;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date start;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date end;
     private List<OneCluster> clusters;
+
+    public List<String> getHotTopicIds(String title) {
+        for(OneCluster oc : clusters) {
+            if(oc.getTitle().equals(title)) {
+                return oc.getItems();
+            }
+        }
+        return new ArrayList<String>();
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public Date getStart() {
         return start;
@@ -30,6 +49,10 @@ public class HotTopicCluster {
 
     public List<OneCluster> getClusters() {
         return clusters;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setStart(Date start) {
@@ -46,6 +69,7 @@ public class HotTopicCluster {
 
     public HotTopicCluster toExternal(int maxLen) {
         HotTopicCluster htc = new HotTopicCluster();
+        htc.setId(this.id);
         htc.setEnd(this.end);
         htc.setStart(this.start);
         List<OneCluster> clusters = new ArrayList<OneCluster>();
@@ -53,7 +77,8 @@ public class HotTopicCluster {
             for(OneCluster oc : this.clusters) {
                 OneCluster cp = new OneCluster();
                 cp.setAlias(oc.getAlias().subList(0, Math.min(oc.getAlias().size(), maxLen)));
-                cp.setKeyword(oc.getKeyword().subList(0, Math.min(oc.getKeyword().size(), maxLen)));
+                cp.setKeywords(oc.getKeywords().subList(0, Math.min(oc.getKeywords().size(), maxLen)));
+                cp.setEntities(oc.getEntities().subList(0, Math.min(oc.getEntities().size(), maxLen)));
                 cp.setScore(oc.getScore());
                 cp.setTitle(oc.getTitle());
                 cp.setItems(new ArrayList<String>());
@@ -68,7 +93,8 @@ public class HotTopicCluster {
 class OneCluster {
     private List<String> items;
     private List<OneName> alias;
-    private List<OneName> keyword;
+    private List<OneName> keywords;
+    private List<OneName> entities;
     private String title;
     private double score;
 
@@ -80,8 +106,12 @@ class OneCluster {
         return alias;
     }
 
-    public List<OneName> getKeyword() {
-        return keyword;
+    public List<OneName> getKeywords() {
+        return keywords;
+    }
+
+    public List<OneName> getEntities() {
+        return entities;
     }
 
     public String getTitle() {
@@ -100,8 +130,8 @@ class OneCluster {
         this.alias = alias;
     }
 
-    public void setKeyword(List<OneName> keyword) {
-        this.keyword = keyword;
+    public void setKeywords(List<OneName> keywords) {
+        this.keywords = keywords;
     }
 
     public void setTitle(String title) {
@@ -110,6 +140,10 @@ class OneCluster {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public void setEntities(List<OneName> entities) {
+        this.entities = entities;
     }
 }
 

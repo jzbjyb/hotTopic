@@ -13,8 +13,6 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
-    public static DateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
     public static String join(String[] strAry, String join) {
         StringBuffer sb=new StringBuffer();
         for(int i=0; i<strAry.length; i++) {

@@ -1,23 +1,31 @@
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'application'
+apply plugin: 'docker'
+
 buildscript {
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+        classpath("se.transmode.gradle:gradle-docker:1.2")
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-
 jar {
-	baseName = 'HotTopic-rest-service'
+	baseName = 'hottopic-rest-service'
 	version = '0.1.0'
 	manifest {
-    attributes 'Main-Class': 'com.ucl.hottopic.Application'
-  }
+        attributes 'Main-Class': 'com.ucl.hottopic.Application'
+    }
 }
+
+group = 'com.ucl'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
@@ -29,7 +37,6 @@ sourceSets {
             srcDirs 'src/main/java'
         }
     }
-
     test {
         java {
             srcDirs 'src/main/test'
@@ -37,18 +44,35 @@ sourceSets {
     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+docker {
+    maintainer = 'jzb <rucjzb@163.com>'
+}
+
+distDocker {
+    exposePort 8080
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+  applicationName = jar.baseName
+  dockerfile = file('src/main/docker/Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
+}
 
 dependencies {
-  compile("org.springframework.boot:spring-boot-starter-web") {
-    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
-  }
-  compile("org.springframework.boot:spring-boot-starter-log4j")
-  compile("org.springframework.data:spring-data-mongodb:1.7.2.RELEASE")
-  compile("com.fasterxml.jackson.datatype:jackson-datatype-joda")
-  testCompile("org.springframework:spring-test")
-  testCompile("junit:junit")
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    compile("org.springframework.boot:spring-boot-starter-log4j")
+    compile("org.springframework.data:spring-data-mongodb:1.7.2.RELEASE")
+    compile("org.springframework.retry:spring-retry:1.1.1.RELEASE")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-joda")
+    testCompile("org.springframework:spring-test")
+    testCompile("junit:junit")
 }
 
 task wrapper(type: Wrapper) {

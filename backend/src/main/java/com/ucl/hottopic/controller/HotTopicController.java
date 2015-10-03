@@ -1,6 +1,7 @@
 package com.ucl.hottopic.controller;
 
 import com.ucl.hottopic.domain.*;
+import com.ucl.hottopic.exception.Exception404;
 import com.ucl.hottopic.service.HotTopicService;
 import com.ucl.hottopic.service.cluster.Cluster;
 import com.ucl.hottopic.service.util.Util;
@@ -27,6 +28,7 @@ import java.util.*;
 public class HotTopicController {
     private Logger logger = Logger.getLogger(HotTopicController.class);
     private static int MAX_PAGESIZE = 10;
+    private static Set<Integer> scopeAllowed = new HashSet<Integer>(Arrays.asList(24, 2));
 
     @Autowired
     private HotTopicService hotTopicService;
@@ -49,7 +51,12 @@ public class HotTopicController {
         List<HotTopic> hts = new ArrayList<HotTopic>();
         Date now = new Date();
         if(start.equals("") && end.equals("")) {
-            return getHotTopicsByTime(Util.ISO_FORMAT.format(Util.getDateTime(now, -1)), Util.ISO_FORMAT.format(now), pageNum, pageSize);
+            // get current day's hot topics
+            Calendar cal = Calendar.getInstance();
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(cal.getTime());
+            startCal.add(Calendar.DAY_OF_MONTH, -1);
+            return getHotTopicsByTime(DatatypeConverter.printDateTime(startCal), DatatypeConverter.printDateTime(cal), pageNum, pageSize);
         } else {
             Date startDate = start != null ? DatatypeConverter.parseDateTime(start).getTime() : null;
             Date endDate = end != null ? DatatypeConverter.parseDateTime(end).getTime() : null;
@@ -69,13 +76,17 @@ public class HotTopicController {
 
     @RequestMapping(value = "/hottopics", method = RequestMethod.GET)
     public RestApi getHotTopics() {
-        Date now = new Date();
-        return getHotTopicsByTime(Util.ISO_FORMAT.format(Util.getDateTime(now, -1)), Util.ISO_FORMAT.format(now), 1, 1);
+        Calendar now = Calendar.getInstance();
+        Calendar start = Calendar.getInstance();
+        start.setTime(now.getTime());
+        start.add(Calendar.DAY_OF_MONTH, -1);
+        return getHotTopicsByTime(DatatypeConverter.printDateTime(start), DatatypeConverter.printDateTime(now), 1, 1);
     }
 
     @RequestMapping(value = "/hottopics/{id}", method = RequestMethod.GET)
     public RestApi getHotTopicById(@PathVariable String id) {
         HotTopic ht = hotTopicService.getOneHotTopic(id);
+        if(ht == null) throw new Exception404(String.format("Hot topic %s not found", id));
         return new RestApi().setData(RestApi.getDataInstance().setHotTopics(ht));
     }
 
@@ -86,24 +97,26 @@ public class HotTopicController {
             now.setTime(DatatypeConverter.parseDateTime(date).getTime());
         }
         Calendar end = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR), 0, 0);
-        Set<Integer> scopeAllowed = new HashSet<Integer>(Arrays.asList(24, 2));
+                now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY), 0, 0);
+
         if(!scopeAllowed.contains(scope)) {
             int minDis = Integer.MIN_VALUE;
-            int minScope = 0;
             for(int al : scopeAllowed) {
                 if(Math.abs(al - scope) < minDis) {
                     minDis = Math.abs(al - scope);
-                    minScope = al;
+                    scope = al;
                 }
             }
-            scope = minScope;
         }
         Calendar start = Calendar.getInstance();
         start.setTime(end.getTime());
         start.add(Calendar.HOUR_OF_DAY, -scope);
+        DatatypeConverter.printDateTime(start);
+        logger.info(String.format("GET CLUSTER %s - %s", DatatypeConverter.printDateTime(start), DatatypeConverter.printDateTime(start)));
         HotTopicCluster htc = hotTopicService.getClusterByTime(start.getTime(), end.getTime());
-        return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(htc));
+        if(htc == null) throw new Exception404(String.format("No cluster has been found with start %s and end %s",
+                DatatypeConverter.printDateTime(start), DatatypeConverter.printDateTime(end)));
+        return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(htc.toExternal(20)));
     }
 
     @RequestMapping(value = "/clusters", method = RequestMethod.GET, params = {"before", "pageNum", "pageSize"})
@@ -111,26 +124,43 @@ public class HotTopicController {
         if(pageNum <= 0) pageNum = 1;
         if(pageSize <= 0) pageSize = 1;
         if(pageSize > MAX_PAGESIZE) pageSize = MAX_PAGESIZE;
-        Date d = new Date();
+        Calendar cal = Calendar.getInstance();
         if(!date.equals("")) {
-            d = DatatypeConverter.parseDateTime(date).getTime();
+            cal = DatatypeConverter.parseDateTime(date);
         }
-        List<HotTopicCluster> clusters = hotTopicService.getClusterPage(d, pageNum, pageSize).getContent();
+        List<HotTopicCluster> clusters = hotTopicService.getClusterPage(cal.getTime(), pageNum, pageSize).getContent();
         List<HotTopicCluster> clustersExt = new ArrayList<HotTopicCluster>();
         for(HotTopicCluster htc : clusters) {
             clustersExt.add(htc.toExternal(20));
         }
+        logger.info(String.format("GET CLUSTER before %s page %d with page size %d", DatatypeConverter.printDateTime(cal), pageNum, pageSize));
         return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(clustersExt));
     }
 
     @RequestMapping(value = "/clusters", method = RequestMethod.GET)
     public RestApi getCluster() {
-        return getClusterList(Util.ISO_FORMAT.format(new Date()), 1, 1);
+        return getClusterList(DatatypeConverter.printDateTime(Calendar.getInstance()), 1, 1);
     }
 
     @RequestMapping(value = "/clusters/{id}", method = RequestMethod.GET)
     public RestApi getClusterById(@PathVariable String id) {
         HotTopicCluster htc = hotTopicService.getOneHotTopicCluster(id);
+        if(htc == null) throw new Exception404(String.format("Cluster %s not found", id));
         return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(htc));
+    }
+
+    @RequestMapping(value = "/clusters/{id}/hotTopics", method = RequestMethod.GET, params = {"title", "pageNum", "pageSize"})
+    public RestApi getClusterHotTopics(@PathVariable String id, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                       @RequestParam(value = "pageSize", defaultValue = "1") int pageSize, @RequestParam(value = "title") String title) {
+        if(pageNum <= 0) pageNum = 1;
+        if(pageSize <= 0) pageSize = 1;
+        if(pageSize > MAX_PAGESIZE) pageSize = MAX_PAGESIZE;
+        HotTopicCluster htc = hotTopicService.getOneHotTopicCluster(id);
+        List<String> htIds = htc.getHotTopicIds(title);
+        if(htIds.size() == 0) throw new Exception404(String.format("Cluster %s doesn't have %s cluster", id, title));
+        int si = pageSize * (pageNum - 1);
+        int ei = si + pageSize;
+        List<String> ids = htIds.subList(Math.min(htIds.size(), si), Math.min(htIds.size(), ei));
+        return getHotTopicsById(Util.join(ids.toArray(new String[ids.size()]), ","));
     }
 }

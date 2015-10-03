@@ -38,8 +38,10 @@
   	border-bottom-color: $special-color;
   }
 }
-.ht-alias {
+.ht-alias, .ht-keywords, .ht-entities {
+	padding-top: 1rem;
 	list-style: none;
+	@include clearfix;
 	li {
 		font-size: 1.3rem;
 		float: left;
