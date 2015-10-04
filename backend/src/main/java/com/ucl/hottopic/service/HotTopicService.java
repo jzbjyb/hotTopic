@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class HotTopicService {
     }
 
     public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
-        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, "end"));
+        // sort according end then start
+        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, new ArrayList<String>(Arrays.asList("end", "start"))));
         return hotTopicClusterRepository.findByEndLessThanEqual(end, request);
     }
 

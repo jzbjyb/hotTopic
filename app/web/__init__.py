@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, Blueprint
+from flask.ext.compress import Compress
 from web import views
 from web.models import utils
 from logging import StreamHandler, DEBUG, INFO, Formatter
 
 app = Flask(__name__)
+Compress(app)
 
 #log config
 level = DEBUG

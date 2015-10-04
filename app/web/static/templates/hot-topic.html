@@ -2,12 +2,13 @@
 	<div class="datetime">
 		<button ng-click="changeDay(-1)">上一天</button>
 		<button ng-click="changeDay(1)">下一天</button>
-		<input type="text" ng-model="date.year" ng-blur="change()"/>年<input type="text" ng-model="date.month" ng-blur="change()"/>月
-		<input type="text" ng-model="date.day" ng-blur="change()"/>日<input type="text" ng-model="date.hour" ng-blur="change()"/>时
+		<input type="text" ng-model="date.year"/>年<input type="text" ng-model="date.month"/>月
+		<input type="text" ng-model="date.day"/>日<input type="text" ng-model="date.hour"/>时
 		<select id="scope" ng-model="scope">
 			<option value="24">24</option>
 			<option value="2">2</option>
 		</select>
+		<button ng-click="change()">查询</button>
 	</div>
 	<div class="ht__list">
 		<div class="ht__content" ng-class="{added: htc['added']}" ng-repeat="htc in hotTopicClusters['clusters']">
@@ -23,7 +24,7 @@
 				</ul>
 				<label>关键词（百度serp）</label>
 				<ul class="ht-keywords">
-					<li ng-repeat="keyword in htc['keywords']">{{keyword['title']}}<sup>{{keyword['score']}}</sup></li>
+					<li ng-repeat="keyword in htc['keywords']">{{keyword['title']}}<sup>{{keyword['score'].toString().substring(0, 4)}}</sup></li>
 				</ul>
 				<label>命名实体</label>
 				<ul class="ht-entities">

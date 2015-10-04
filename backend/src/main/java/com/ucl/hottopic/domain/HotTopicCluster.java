@@ -67,14 +67,14 @@ public class HotTopicCluster {
         this.clusters = clusters;
     }
 
-    public HotTopicCluster toExternal(int maxLen) {
+    public HotTopicCluster toExternal(int sc, int ec, int maxLen) {
         HotTopicCluster htc = new HotTopicCluster();
         htc.setId(this.id);
         htc.setEnd(this.end);
         htc.setStart(this.start);
         List<OneCluster> clusters = new ArrayList<OneCluster>();
         if(this.clusters != null) {
-            for(OneCluster oc : this.clusters) {
+            for(OneCluster oc : this.clusters.subList(Math.min(sc, this.clusters.size()), Math.min(ec, this.clusters.size()))) {
                 OneCluster cp = new OneCluster();
                 cp.setAlias(oc.getAlias().subList(0, Math.min(oc.getAlias().size(), maxLen)));
                 cp.setKeywords(oc.getKeywords().subList(0, Math.min(oc.getKeywords().size(), maxLen)));
@@ -91,12 +91,12 @@ public class HotTopicCluster {
 }
 
 class OneCluster {
-    private List<String> items;
+    private String title;
+    private double score;
     private List<OneName> alias;
     private List<OneName> keywords;
     private List<OneName> entities;
-    private String title;
-    private double score;
+    private List<String> items;
 
     public List<String> getItems() {
         return items;

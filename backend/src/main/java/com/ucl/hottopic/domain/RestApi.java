@@ -65,7 +65,6 @@ public class RestApi {
 
     public class Data {
         private List<HotTopic> hotTopics = new ArrayList<HotTopic>();
-        private List<TopicClusterExt> topicClusterExts = new ArrayList<TopicClusterExt>();
         private List<HotTopicCluster> hotTopicClusters = new ArrayList<HotTopicCluster>();
 
         public Data(){
@@ -74,10 +73,6 @@ public class RestApi {
 
         public List<HotTopic> getHotTopics() {
             return hotTopics;
-        }
-
-        public List<TopicClusterExt> getTopicClusterExts() {
-            return topicClusterExts;
         }
 
         public List<HotTopicCluster> getHotTopicClusters() {
@@ -92,17 +87,6 @@ public class RestApi {
         public Data setHotTopics(HotTopic hotTopic) {
             this.hotTopics = new ArrayList<HotTopic>();
             this.hotTopics.add(hotTopic);
-            return this;
-        }
-
-        public Data setTopicClusterExts(List<TopicClusterExt> topicClusterExts) {
-            this.topicClusterExts = topicClusterExts;
-            return this;
-        }
-
-        public Data setTopicClusterExts(TopicClusterExt topicClusterExt) {
-            this.topicClusterExts = new ArrayList<TopicClusterExt>();
-            this.topicClusterExts.add(topicClusterExt);
             return this;
         }
 
