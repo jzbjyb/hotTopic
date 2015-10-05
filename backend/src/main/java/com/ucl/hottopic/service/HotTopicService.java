@@ -43,7 +43,9 @@ public class HotTopicService {
 
     public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
         // sort according end then start
-        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(Sort.Direction.DESC, new ArrayList<String>(Arrays.asList("end", "start"))));
+        PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(
+                Arrays.asList(new Sort.Order(Sort.Direction.DESC, "end"), new Sort.Order(Sort.Direction.ASC, "start"))
+        ));
         return hotTopicClusterRepository.findByEndLessThanEqual(end, request);
     }
 

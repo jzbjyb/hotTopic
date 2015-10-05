@@ -1,8 +1,11 @@
 package com.ucl.hottopic.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.ucl.hottopic.editor.DoubleSerializer;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -155,6 +158,7 @@ class OneName {
         return title;
     }
 
+    @JsonSerialize(using = DoubleSerializer.class)
     public double getScore() {
         return score;
     }

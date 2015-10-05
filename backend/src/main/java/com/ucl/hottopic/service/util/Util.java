@@ -1,5 +1,7 @@
 package com.ucl.hottopic.service.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +15,14 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     public static String join(String[] strAry, String join) {
         StringBuffer sb=new StringBuffer();
         for(int i=0; i<strAry.length; i++) {
