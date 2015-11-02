@@ -3,6 +3,7 @@ package com.ucl.hottopic.controller;
 import com.ucl.hottopic.domain.*;
 import com.ucl.hottopic.exception.Exception404;
 import com.ucl.hottopic.service.HotTopicService;
+import com.ucl.hottopic.service.SerpService;
 import com.ucl.hottopic.service.cluster.Cluster;
 import com.ucl.hottopic.service.util.Util;
 import org.apache.log4j.Logger;
@@ -48,6 +49,8 @@ public class HotTopicController {
 
     @Autowired
     private HotTopicService hotTopicService;
+    @Autowired
+    private SerpService serpService;
     @Autowired
     private Cluster cluster;
 
@@ -174,6 +177,7 @@ public class HotTopicController {
         if(pageSize <= 0) pageSize = 1;
         if(pageSize > MAX_PAGE_SIZE_HOTTOPIC) pageSize = MAX_PAGE_SIZE_HOTTOPIC;
         HotTopicCluster htc = hotTopicService.getOneHotTopicCluster(id);
+        if(htc == null) throw new Exception404(String.format("Cluster %s not found", id));
         List<String> htIds = htc.getHotTopicIds(title);
         if(htIds.size() == 0) throw new Exception404(String.format("Cluster %s doesn't have %s cluster", id, title));
         int si = pageSize * (pageNum - 1);
@@ -181,4 +185,5 @@ public class HotTopicController {
         List<String> ids = htIds.subList(Math.min(htIds.size(), si), Math.min(htIds.size(), ei));
         return getHotTopicsById(Util.join(ids.toArray(new String[ids.size()]), ","));
     }
+
 }

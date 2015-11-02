@@ -33,6 +33,7 @@ public class HotTopic {
     private String imgUrl;
     private String targetUrl;
     private int rank;
+    private String baiduSerpId;
 
     public String getId() {
         return id;
@@ -86,6 +87,10 @@ public class HotTopic {
         return rank;
     }
 
+    public String getBaiduSerpId() {
+        return baiduSerpId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -136,5 +141,9 @@ public class HotTopic {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public void setBaiduSerpId(String baiduSerpId) {
+        this.baiduSerpId = baiduSerpId;
     }
 }

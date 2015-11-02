@@ -66,6 +66,8 @@ public class RestApi {
     public class Data {
         private List<HotTopic> hotTopics = new ArrayList<HotTopic>();
         private List<HotTopicCluster> hotTopicClusters = new ArrayList<HotTopicCluster>();
+        private List<BaiduSerp> baiduSerps = new ArrayList<BaiduSerp>();
+        private List<CrawlSource> crawlSources = new ArrayList<CrawlSource>();
 
         public Data(){
             this.hotTopics = new ArrayList<HotTopic>();
@@ -79,6 +81,14 @@ public class RestApi {
             return hotTopicClusters;
         }
 
+        public List<BaiduSerp> getBaiduSerps() {
+            return baiduSerps;
+        }
+
+        public List<CrawlSource> getCrawlSources() {
+            return crawlSources;
+        }
+
         public Data setHotTopics(List<HotTopic> hotTopics) {
             this.hotTopics = hotTopics;
             return this;
@@ -87,6 +97,28 @@ public class RestApi {
         public Data setHotTopics(HotTopic hotTopic) {
             this.hotTopics = new ArrayList<HotTopic>();
             this.hotTopics.add(hotTopic);
+            return this;
+        }
+
+        public Data setCrawlSources(List<CrawlSource> crawlSources) {
+            this.crawlSources = crawlSources;
+            return this;
+        }
+
+        public Data setCrawlSources(CrawlSource crawlSource) {
+            this.crawlSources = new ArrayList<CrawlSource>();
+            this.crawlSources.add(crawlSource);
+            return this;
+        }
+
+        public Data setBaiduSerps(List<BaiduSerp> baiduSerps) {
+            this.baiduSerps = baiduSerps;
+            return this;
+        }
+
+        public Data setBaiduSerps(BaiduSerp baiduSerp) {
+            this.baiduSerps = new ArrayList<BaiduSerp>();
+            this.baiduSerps.add(baiduSerp);
             return this;
         }
 
