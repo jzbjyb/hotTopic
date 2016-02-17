@@ -7,15 +7,11 @@ import com.ucl.hottopic.service.SerpService;
 import com.ucl.hottopic.service.cluster.Cluster;
 import com.ucl.hottopic.service.util.Util;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -128,7 +124,6 @@ public class HotTopicController {
                 }
             }
         }
-
         Calendar start = Calendar.getInstance();
         start.setTime(end.getTime());
         start.add(Calendar.HOUR_OF_DAY, -scope);
@@ -137,7 +132,8 @@ public class HotTopicController {
         HotTopicCluster htc = hotTopicService.getClusterByTime(start.getTime(), end.getTime());
         if(htc == null) throw new Exception404(String.format("No cluster has been found with start %s and end %s",
                 DatatypeConverter.printDateTime(start), DatatypeConverter.printDateTime(end)));
-        return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(toExternal(htc, req)));
+        HotTopicCluster htce = toExternal(htc, req);
+        return new RestApi().setData(RestApi.getDataInstance().setHotTopicClusters(htce));
     }
 
     @RequestMapping(value = "/clusters", method = RequestMethod.GET, params = {"before", "pageNum", "pageSize"})

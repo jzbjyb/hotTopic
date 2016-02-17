@@ -1,0 +1,9 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd">
+    <cache name="hottopicCluster"
+           maxBytesLocalHeap="100M"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="FIFO">
+        <sizeOfPolicy maxDepth="1000000" maxDepthExceededBehavior="continue"/>
+    </cache>
+</ehcache>

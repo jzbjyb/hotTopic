@@ -22,12 +22,12 @@ import java.util.List;
 @Document(collection = "HotTopicCluster")
 public class HotTopicCluster {
     @Id
-    private String id;
+    protected String id;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date start;
+    protected Date start;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date end;
-    private List<OneCluster> clusters;
+    protected Date end;
+    protected List<OneCluster> clusters;
 
     public List<String> getHotTopicIds(String title) {
         for(OneCluster oc : clusters) {
@@ -91,83 +91,84 @@ public class HotTopicCluster {
         htc.setClusters(clusters);
         return htc;
     }
-}
 
-class OneCluster {
-    private String title;
-    private double score;
-    private List<OneName> alias;
-    private List<OneName> keywords;
-    private List<OneName> entities;
-    private List<String> items;
 
-    public List<String> getItems() {
-        return items;
+    public static class OneCluster {
+        protected String title;
+        protected double score;
+        protected List<OneName> alias;
+        protected List<OneName> keywords;
+        protected List<OneName> entities;
+        protected List<String> items;
+
+        public List<String> getItems() {
+            return items;
+        }
+
+        public List<OneName> getAlias() {
+            return alias;
+        }
+
+        public List<OneName> getKeywords() {
+            return keywords;
+        }
+
+        public List<OneName> getEntities() {
+            return entities;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        public void setItems(List<String> items) {
+            this.items = items;
+        }
+
+        public void setAlias(List<OneName> alias) {
+            this.alias = alias;
+        }
+
+        public void setKeywords(List<OneName> keywords) {
+            this.keywords = keywords;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setScore(double score) {
+            this.score = score;
+        }
+
+        public void setEntities(List<OneName> entities) {
+            this.entities = entities;
+        }
     }
 
-    public List<OneName> getAlias() {
-        return alias;
-    }
+    public static class OneName {
+        protected String title;
+        protected double score;
 
-    public List<OneName> getKeywords() {
-        return keywords;
-    }
+        public String getTitle() {
+            return title;
+        }
 
-    public List<OneName> getEntities() {
-        return entities;
-    }
+        @JsonSerialize(using = DoubleSerializer.class)
+        public double getScore() {
+            return score;
+        }
 
-    public String getTitle() {
-        return title;
-    }
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
-    public double getScore() {
-        return score;
-    }
-
-    public void setItems(List<String> items) {
-        this.items = items;
-    }
-
-    public void setAlias(List<OneName> alias) {
-        this.alias = alias;
-    }
-
-    public void setKeywords(List<OneName> keywords) {
-        this.keywords = keywords;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
-    }
-
-    public void setEntities(List<OneName> entities) {
-        this.entities = entities;
-    }
-}
-
-class OneName {
-    private String title;
-    private double score;
-
-    public String getTitle() {
-        return title;
-    }
-
-    @JsonSerialize(using = DoubleSerializer.class)
-    public double getScore() {
-        return score;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
+        public void setScore(double score) {
+            this.score = score;
+        }
     }
 }

@@ -5,7 +5,9 @@ import com.ucl.hottopic.domain.HotTopicCluster;
 import com.ucl.hottopic.repository.HotTopicClusterRepository;
 import com.ucl.hottopic.repository.HotTopicRepository;
 import com.ucl.hottopic.service.util.ArrayListPrintable;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,10 +15,8 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import javax.xml.bind.DatatypeConverter;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +28,7 @@ import java.util.List;
 
 @Service
 public class HotTopicService {
+    private Logger logger = Logger.getLogger(HotTopicService.class);
     @Autowired
     private HotTopicRepository hotTopicRepository;
     @Autowired
@@ -37,11 +38,17 @@ public class HotTopicService {
         return hotTopicClusterRepository.findOne(id);
     }
 
+    @Cacheable(value = "hottopicCluster", key = "#start.toString() + '-' + " +
+            "#end.toString()", unless = "#result == null")
     public HotTopicCluster getClusterByTime(Date start, Date end) {
+        logger.info(String.format("update cluster cache at %s", DatatypeConverter.printDateTime(Calendar.getInstance())));
         return hotTopicClusterRepository.findByStartAndEnd(start, end);
     }
 
+    @Cacheable(value = "hottopicCluster", key = "(#end.getYear() * 100000 + #end.getMonth() * 10000 + #end.getDate() * 100 + #end.getHours())" +
+            " + '-' + #pageNum + '-' + #pageSize", unless = "#result.getTotalElements() == 0")
     public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
+        logger.info(String.format("update cluster list cache at %s", DatatypeConverter.printDateTime(Calendar.getInstance())));
         // sort according end then start
         PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(
                 Arrays.asList(new Sort.Order(Sort.Direction.DESC, "end"), new Sort.Order(Sort.Direction.ASC, "start"))

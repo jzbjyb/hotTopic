@@ -68,6 +68,8 @@ public class RestApi {
         private List<HotTopicCluster> hotTopicClusters = new ArrayList<HotTopicCluster>();
         private List<BaiduSerp> baiduSerps = new ArrayList<BaiduSerp>();
         private List<CrawlSource> crawlSources = new ArrayList<CrawlSource>();
+        private List<HotWord> hotWords = new ArrayList<HotWord>();
+        private List<HotWordCluster> hotWordClusters = new ArrayList<HotWordCluster>();
 
         public Data(){
             this.hotTopics = new ArrayList<HotTopic>();
@@ -87,6 +89,14 @@ public class RestApi {
 
         public List<CrawlSource> getCrawlSources() {
             return crawlSources;
+        }
+
+        public List<HotWord> getHotWords() {
+            return hotWords;
+        }
+
+        public List<HotWordCluster> getHotWordClusters() {
+            return hotWordClusters;
         }
 
         public Data setHotTopics(List<HotTopic> hotTopics) {
@@ -131,6 +141,28 @@ public class RestApi {
             this.hotTopicClusters = new ArrayList<HotTopicCluster>();
             this.hotTopicClusters.add(hotTopicCluster);
             return  this;
+        }
+
+        public Data setHotWords(List<HotWord> hotWords) {
+            this.hotWords = hotWords;
+            return this;
+        }
+
+        public Data setHotWords(HotWord hotWord) {
+            this.hotWords = new ArrayList<HotWord>();
+            this.hotWords.add(hotWord);
+            return this;
+        }
+
+        public Data setHotWordClusters(List<HotWordCluster> hotWordClusters) {
+            this.hotWordClusters = hotWordClusters;
+            return this;
+        }
+
+        public Data setHotWordClusters(HotWordCluster hotWordCluster) {
+            this.hotWordClusters = new ArrayList<HotWordCluster>();
+            this.hotWordClusters.add(hotWordCluster);
+            return this;
         }
     }
 }

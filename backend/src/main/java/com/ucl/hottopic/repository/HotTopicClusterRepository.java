@@ -1,6 +1,7 @@
 package com.ucl.hottopic.repository;
 
 import com.ucl.hottopic.domain.HotTopicCluster;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
