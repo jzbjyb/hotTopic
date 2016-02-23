@@ -2,7 +2,8 @@
          xsi:noNamespaceSchemaLocation="ehcache.xsd">
     <cache name="hottopicCluster"
            maxBytesLocalHeap="100M"
-           timeToLiveSeconds="3600"
+           eternal="false"
+           timeToLiveSeconds="1200"
            memoryStoreEvictionPolicy="FIFO">
         <sizeOfPolicy maxDepth="1000000" maxDepthExceededBehavior="continue"/>
     </cache>
