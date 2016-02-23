@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.lang.String;
 import java.lang.System;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,7 +28,7 @@ public class ClusterTest {
 
     @Test
     public void testCluster() {
-        List<HotTopic> hts = hotTopicService.getAllHotTopic();
+        List<HotTopic> hts = hotTopicService.getHotTopicBetween(new Date(), new Date());
         List<TopicCluster> clusterList = cluster.cluster(hts, 0.6);
         for(TopicCluster c : clusterList) {
             List<String> titles = new ArrayList<String>(c.getCluster().keySet());
