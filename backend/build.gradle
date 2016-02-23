@@ -6,7 +6,7 @@ project.ext {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
-apply plugin: 'aspectj'
+//apply plugin: 'aspectj'
 apply plugin: 'application'
 apply plugin: 'docker'
 
@@ -20,7 +20,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE")
-        classpath("nl.eveoh:gradle-aspectj:1.6")
+        //classpath("nl.eveoh:gradle-aspectj:1.6")
         classpath("se.transmode.gradle:gradle-docker:1.2")
 	}
 }
@@ -92,7 +92,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.4")
     compile("org.aspectj:aspectjrt:$aspectjVersion")
     compile("org.aspectj:aspectjweaver:$aspectjVersion")
-    testCompile("org.springframework:spring-test:4.0.0")
+    testCompile("org.springframework:spring-test:4.2.3.RELEASE")
     testCompile("junit:junit")
 }
 
