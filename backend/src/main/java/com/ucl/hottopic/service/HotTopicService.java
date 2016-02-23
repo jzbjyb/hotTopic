@@ -48,14 +48,14 @@ public class HotTopicService {
     }
 
     @Cacheable(value = "hottopicCluster", key = "(#end.getYear() * 100000 + #end.getMonth() * 10000 + #end.getDate() * 100 + #end.getHours())" +
-            " + '-' + #pageNum + '-' + #pageSize", unless = "#result.getNumberOfElements() == 0")
+            " + '-' + #pageNum + '-' + #pageSize", unless = "#result.size() == 0")
     public List<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
         logger.info(String.format("update cluster list cache at %s", DatatypeConverter.printDateTime(Calendar.getInstance())));
         // sort according end then start
         PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(
                 Arrays.asList(new Sort.Order(Sort.Direction.DESC, "end"))
         ));
-        List<HotTopicCluster> cs = hotTopicClusterRepository.findByEndBefore(new DatePrintable(end), request).getContent();
+        List<HotTopicCluster> cs = new ArrayList<HotTopicCluster>(hotTopicClusterRepository.findByEndBefore(new DatePrintable(end), request).getContent());
         Collections.sort(cs, new Comparator<HotTopicCluster>() {
             @Override
             public int compare(HotTopicCluster o1, HotTopicCluster o2) {
