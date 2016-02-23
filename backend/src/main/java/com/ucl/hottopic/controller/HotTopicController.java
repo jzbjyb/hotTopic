@@ -145,7 +145,7 @@ public class HotTopicController {
         if(!date.equals("")) {
             cal = DatatypeConverter.parseDateTime(date);
         }
-        List<HotTopicCluster> clusters = hotTopicService.getClusterPage(cal.getTime(), pageNum, pageSize).getContent();
+        List<HotTopicCluster> clusters = hotTopicService.getClusterPage(cal.getTime(), pageNum, pageSize);
         List<HotTopicCluster> clustersExt = new ArrayList<HotTopicCluster>();
         for(HotTopicCluster htc : clusters) {
             clustersExt.add(toExternal(htc, req));

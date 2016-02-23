@@ -5,11 +5,13 @@ import com.ucl.hottopic.domain.HotTopicCluster;
 import com.ucl.hottopic.repository.HotTopicClusterRepository;
 import com.ucl.hottopic.repository.HotTopicRepository;
 import com.ucl.hottopic.service.util.ArrayListPrintable;
+import com.ucl.hottopic.service.util.DatePrintable;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Service;
@@ -46,14 +48,22 @@ public class HotTopicService {
     }
 
     @Cacheable(value = "hottopicCluster", key = "(#end.getYear() * 100000 + #end.getMonth() * 10000 + #end.getDate() * 100 + #end.getHours())" +
-            " + '-' + #pageNum + '-' + #pageSize", unless = "#result.getTotalElements() == 0")
-    public Page<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
+            " + '-' + #pageNum + '-' + #pageSize", unless = "#result.getNumberOfElements() == 0")
+    public List<HotTopicCluster> getClusterPage(Date end, int pageNum, int pageSize) {
         logger.info(String.format("update cluster list cache at %s", DatatypeConverter.printDateTime(Calendar.getInstance())));
         // sort according end then start
         PageRequest request = new PageRequest(pageNum-1, pageSize, new Sort(
-                Arrays.asList(new Sort.Order(Sort.Direction.DESC, "end"), new Sort.Order(Sort.Direction.ASC, "start"))
+                Arrays.asList(new Sort.Order(Sort.Direction.DESC, "end"))
         ));
-        return hotTopicClusterRepository.findByEndLessThanEqual(end, request);
+        List<HotTopicCluster> cs = hotTopicClusterRepository.findByEndBefore(new DatePrintable(end), request).getContent();
+        Collections.sort(cs, new Comparator<HotTopicCluster>() {
+            @Override
+            public int compare(HotTopicCluster o1, HotTopicCluster o2) {
+                // order by 1) end desc 2) start asc
+                return (-o1.getEnd().compareTo(o2.getEnd()) * 10) + o1.getStart().compareTo(o2.getStart());
+            }
+        });
+        return cs;
     }
 
     public List<HotTopicCluster> getAllClusters() {
